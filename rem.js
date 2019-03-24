@@ -9,4 +9,4 @@
   }
   setRem()
   window.addEventListener('resize', setRem, false)
-})();
+})()
