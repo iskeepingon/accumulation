@@ -26,7 +26,7 @@ Router.prototype.setup = function (routemap, defaultFunc) {
 Router.prototype.start = function () {
   var that = this
   function hashChange() {
-    var hash = location.hash, route, matchResult
+    var hash = window.location.hash, route, matchResult
     for (var routeIndex in that.routemap) {
       route = that.routemap[routeIndex]
       matchResult = hash.match(route.rule)
