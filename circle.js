@@ -24,11 +24,16 @@ circle.prototype = {
     x = r * Math.cos(hudu)
     y = r * Math.sin(hudu)
     return {
-      x: x,
-      y: y
+      x: x + this.x,
+      y: y + this.y
     }
   },
-
+  /**
+   * @function 求余
+   * @param num1
+   * @param num2
+   * @returns {rest}
+   */
   getRest: function (num1, num2) {
     var num11 = num1
     var num22 = num2
@@ -50,6 +55,6 @@ circle.prototype = {
 }
 
 var r = 100
-var c = new circle()
-var coordinate = c.getCoordinate(3 / 4 * 2 * Math.PI * r)
+var c = new circle(100, -100)//创建一个圆形跑道 半径是100 圆心坐标是(100,-100)
+var coordinate = c.getCoordinate(3 / 4 * 2 * Math.PI * r) //某人跑了3/4的圆形跑道,计算某人此时所在的位置的坐标
 console.log(coordinate)
