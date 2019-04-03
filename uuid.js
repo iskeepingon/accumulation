@@ -3,7 +3,7 @@
  */
 
 var uuid = function () {
-  //重现一样的概率是Math.pow(1/16,36)
+  //重现一样的概率是Math.pow(1/16,30)*s[19]的概率
   var s = []
   var hexDigits = '0123456789abcdef'
   for (var i = 0; i < 36; i++) {
