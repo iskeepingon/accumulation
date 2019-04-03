@@ -1,10 +1,5 @@
 # accumulation
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
 ### introduction
 ```
 axois-interceptors.js展示了axois请求模块的请求和响应的一些处理逻辑
