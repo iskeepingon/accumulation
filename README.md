@@ -17,4 +17,5 @@ throttle.js展示了如何实现节流
 uuid.js展示了uuid的生成逻辑
 permutationAndCombination.js展示了如何实现排列组合
 util.js展示了常用的一些方法
+findNodeFromTreeById.js展示了如何从tree的数据结构的数据中查找指定id的节点
 ```
