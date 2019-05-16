@@ -20,4 +20,5 @@ permutationAndCombination.js展示了如何实现排列组合
 util.js展示了常用的一些方法
 findNodeFromTreeById.js展示了如何从tree的数据结构的数据中查找指定id的节点
 _new.js展示了模拟了new关键字的实现
+request.js展示了如何对请求(微信请求)做重新封装
 ```
