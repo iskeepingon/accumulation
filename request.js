@@ -68,12 +68,8 @@ function createResponseData(linkData, nonce) {
   //生成responseData
   let keys = Object.keys(linkData)
   let responseData = ''
-  if (keys.length > 0) {
-    linkData.nonce = nonce
-    responseData = queryToString(linkData, ['', ''])
-  } else {
-    responseData = responseData + 'nonce' + nonce
-  }
+  linkData.nonce = nonce
+  responseData = queryToString(linkData, ['', ''])
   return responseData
 }
 
