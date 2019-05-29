@@ -66,10 +66,14 @@ function createLink(linkData) {
 
 function createResponseData(linkData, nonce) {
   //生成responseData
-  let keys = Object.keys(linkData)
   let responseData = ''
-  linkData.nonce = nonce
-  responseData = queryToString(linkData, ['', ''])
+  let keys = Object.keys(linkData)
+  if (keys.length > 0) {
+    linkData.nonce = nonce
+    responseData = queryToString(linkData, ['', ''])
+  } else {
+    responseData = responseData + 'nonce' + nonce
+  }
   return responseData
 }
 
@@ -83,116 +87,23 @@ function createSign(test, responseData, timestamp, data) {
   return md5(md5Data)
 }
 
-function wxLogin() {
-  //微信登录
-  return new Promise((resolve, reject)=> {
-    wx.login({
-      success: res => {
-        resolve(res)
-      },
-      fail: err=> {
-        reject(err)
-      }
-    })
-  })
-}
-
-function getMemberInfo(data, successCallback) {
-  //获取member信息
-  return new Promise((resolve, reject)=> {
-    request(urls.memberbyopenid, data, res => {
-      if (res.code == -1) {
-        reject()
-      } else {
-        if (res.code == 0) {
-          wx.setStorageSync('isMember', 1)
-          wx.setStorageSync('token', res.data.token)
-          wx.setStorageSync('mobile', res.data.mobile)
-          wx.setStorageSync('memberid', res.data.memberid)
-          successCallback()
-        } else if (res.code == 120006) {
-          //未注册
-          wx.setStorageSync('isMember', -1)
-          main.link(urls.page_login, 1)
-        } else {
-        }
-        resolve(res)
-      }
-    }, 'post', {}, false, false, false, '')
-  })
-}
-
-function getWechatSessionkey(data) {
-  //获取sessionkey
-  return new Promise((resolve, reject)=> {
-    request(urls.getwechatsessionkey, data, res => {
-      if (res.code == -1) {
-        reject()
-      } else {
-        if (res.code == 0) {
-          wx.setStorageSync('openid', res.data.openid)
-          wx.setStorageSync('sessionkey', res.data.sessionkey)
-        } else {
-
-        }
-        resolve(res)
-      }
-    }, 'post', {}, false, false, false, '加载中...')
-  })
-}
-
-function login(successCallback) {
-  // 登录
-  // 1,微信登录
-  // 2,获取sessionkey
-  // 3,获取member信息
-  wxLogin().then(res=> {
-    if (res.code) {
-      let openid = wx.getStorageSync('openid')
-      if (typeof openid == 'undefined' || openid == '') {
-        getWechatSessionkey({appid: urls.appid, jscode: res.code}).then(ret=> {
-          if (ret.code == 0) {
-            getMemberInfo({appid: urls.appid, openid: ret.data.openid}, successCallback).then(reg=> {
-            }).catch(err=> {
-            })
-          } else {
-          }
-        }).catch(err=> {
-        })
-      } else {
-        getMemberInfo({appid: urls.appid, openid}, successCallback).then(req=> {
-        }).catch(err=> {
-        })
-      }
-    } else {
-      wx.showModal({
-        title: '温馨提示',
-        content: res.errMsg,
-        showCancel: false
-      })
-    }
-  }).catch(err=> {
-  })
-
-}
-
-function request({url, data, nextCallback, method = 'get', linkData = {}, tast = true, neterr = false, errtips = true, tasttexy = '', pageInitCallback}) {
+function request({url, data, nextCallback, method = 'get', linkData = {}, toast = true, neterr = false, errtips = true, toasttexy = '', pageInitCallback}) {
   // 参数规则
   // url 请求地址，
   // data post请求用到的，
   // method 请求方式，
   // linkData url中的参数，
-  // tast 加载进度条，
+  // toast 加载进度条，
   // neterr 网络超时提示，
   // errtips 交互错误提示，
-  // tasttexy 加载框提示文案 tast开启后tasttexy才能生效
-  requestProxy(url, data, nextCallback, method, linkData, tast, neterr, errtips, tasttexy, pageInitCallback)
+  // toasttexy 加载框提示文案 toast开启后toasttexy才能生效
+  requestProxy({url, data, nextCallback, method, linkData, toast, neterr, errtips, toasttexy, pageInitCallback})
 }
 
-function requestProxy(url, data, nextCallback, method = 'get', linkData = {}, tast = true, neterr = false, errtips = true, tasttexy = '', pageInitCallback) {
-  if (tast == true) {
+function requestProxy({url, data, nextCallback, method = 'get', linkData = {}, toast = true, neterr = false, errtips = true, toasttexy = '', pageInitCallback}) {
+  if (toast == true) {
     wx.showToast({
-      title: tasttexy,
+      title: toasttexy,
       icon: 'loading',
       mask: true,
       duration: 10000
@@ -223,7 +134,7 @@ function requestProxy(url, data, nextCallback, method = 'get', linkData = {}, ta
       'X-ZZ-Device-Version': wx.getStorageSync('DeviceVersion')
     },
     success: (res) => {
-      if (tast == true) {
+      if (toast == true) {
         wx.hideToast()
       }
       if (res.data.code == 0) {
@@ -240,7 +151,7 @@ function requestProxy(url, data, nextCallback, method = 'get', linkData = {}, ta
       } else if (res.data.code == 100058) {
         //您的系统时间不正确 存在时间差
         setTimeDiff(res.data.now)
-        requestProxy(url, data, nextCallback, method, linkData, tast, neterr, errtips, tasttexy)
+        requestProxy(url, data, nextCallback, method, linkData, toast, neterr, errtips, toasttexy)
       } else {
         // 非正常返回提示
         // 260031 订单同步信息异常，稍后系统会自动修复，敬请谅解，谢谢
@@ -261,7 +172,7 @@ function requestProxy(url, data, nextCallback, method = 'get', linkData = {}, ta
     },
     fail: (err) => {
       //请求失败
-      if (tast == true) {
+      if (toast == true) {
         wx.hideToast()
       }
       if (neterr == true) {
