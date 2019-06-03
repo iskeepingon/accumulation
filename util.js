@@ -3,14 +3,14 @@ const Util = function () {
 }
 
 Util.prototype = {
-  isEmpty: function (field) {
+  isEmpty(field) {
     //判断值是否为空
     if (typeof field == 'undefined' || ('' + field).trim() == '') {
       return true
     }
     return false
   },
-  isNumber: function (field) {
+  isNumber(field) {
     //判断值是否为数字
     let fieldV = parseFloat(field)
     if (typeof field !== 'undefined' && isNaN(fieldV) === false && field == fieldV) {
@@ -18,12 +18,17 @@ Util.prototype = {
     }
     return false
   },
-  isPhone: function (phone) {
+  isPhone(phone) {
     // 手机号校验
     let reg = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/
     return reg.test(phone)
   },
-  clone: function (jsonObj) {
+  isCreditNo(creditNo) {
+    // 身份证号码校验
+    var creditNoReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+    return creditNoReg.test(creditNo)
+  },
+  clone(jsonObj) {
     // 深度克隆
     try {
       return JSON.parse(JSON.stringify(jsonObj))
@@ -31,7 +36,7 @@ Util.prototype = {
       return {}
     }
   },
-  toFixed: function (num, decimal) {
+  toFixed(num, decimal) {
     // 数字保留num 保留decimal位小数 并进行四舍五入
     function _round(num, decimal) {
       if (isNaN(num)) {
@@ -44,7 +49,7 @@ Util.prototype = {
 
     return _round(num, decimal).toFixed(decimal)
   },
-  createYMD: function (timestamp) {
+  createYMD(timestamp) {
     // 根据时间戳获取年月日 如果没有时间戳 则获取当前的时间戳
     let date
     if (isNaN(timestamp)) {
@@ -57,7 +62,7 @@ Util.prototype = {
     let d = date.getDate()
     return [y, m, d].join('.')
   },
-  requestTry: function (promise, totalCount) {
+  requestTry(promise, totalCount) {
     /***
      * @param promise 返回值是Promise实例的函数
      * @param totalCount 异步操作或者异步请求重试总次数
@@ -101,5 +106,41 @@ Util.prototype = {
         _recursion(promise, resolve, reject, count + 2, totalCount)
       })
     })
+  },
+  rsaEncrypt(content, publicKey) {
+    // 对数据进行rsa加密
+    let encStr
+    try {
+      let encryptRsa = new RSA.RSAKey()
+      encryptRsa = RSA.KEYUTIL.getKey('-----BEGIN PUBLIC KEY-----' + publicKey + '-----END PUBLIC KEY-----')//这一行代码抛异常
+      encStr = encryptRsa.encrypt(content)
+      encStr = RSA.hex2b64(encStr)
+    } catch (e) {
+      encStr = ''
+    }
+    return encStr
+  },
+  createYMDHMS(timestamp) {
+    // 根据时间戳获取年月日 如果没有时间戳 则获取当前的时间戳
+    let dateObj
+    if (isNaN(timestamp)) {
+      dateObj = new Date()
+    } else {
+      dateObj = new Date(timestamp)
+    }
+    let year = dateObj.getFullYear()
+    let month = dateObj.getMonth() + 1
+    let date = dateObj.getDate()
+    let hour = dateObj.getHours()
+    let minute = dateObj.getMinutes()
+    let second = dateObj.getSeconds()
+    return {
+      year,
+      month,
+      date,
+      hour,
+      minute,
+      second
+    }
   }
 }
