@@ -142,5 +142,10 @@ Util.prototype = {
       minute,
       second
     }
+  },
+  isChinese(str) {
+    //是否是中文
+    let reg = /^[\u4e00-\u9fa5]+$/
+    return reg.test(str)
   }
 }
