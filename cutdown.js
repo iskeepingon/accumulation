@@ -17,6 +17,7 @@ export default {
       }
       this.cutdown({
         onStart: () => {
+          this.cutdowned = true
           this.isCutdowning = true
         },
         onGoing: (count, timer) => {
@@ -24,7 +25,6 @@ export default {
           this.cutdownCount = count
         },
         onFinish: () => {
-          this.cutdowned = true
           this.isCutdowning = false
         }
       })
