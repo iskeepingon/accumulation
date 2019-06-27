@@ -4,10 +4,10 @@
 export default {
   data () {
     return {
-      cutdownCount: 0,
-      cutdownTimer: 0,
-      cutdowned: false,
-      isCutdowning: false
+      cutdownCount: 0,//倒计时的时间 59s 58s 57s...
+      cutdownTimer: 0,//倒计时定时器的timer
+      cutdowned: false,//是否倒计时过
+      isCutdowning: false//是否正在倒计时
     }
   },
   methods: {
