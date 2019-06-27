@@ -1,3 +1,6 @@
+// <a href="javascript:void(0)" @click="getCode">
+//   {{cutdownCount==0?(cutdowned?'重新获取':'获取验证码'):(cutdownCount+'s')}}
+// </a>
 export default {
   data () {
     return {
@@ -13,8 +16,6 @@ export default {
         return
       }
       this.cutdown({
-        count: 10,
-        gap: 1000,
         onStart: () => {
           this.isCutdowning = true
         },
