@@ -147,5 +147,33 @@ Util.prototype = {
     //是否是中文
     let reg = /^[\u4e00-\u9fa5]+$/
     return reg.test(str)
+  },
+  dismantleWord(ctx, word, rate, w) {
+    //ctx画布上下文
+    //word文字字符串
+    //rate设备宽度375,设计稿750,rate是2
+    //w是文字字符串的宽度
+    let wordArr = []
+    let tmpWordArr = word.split('')
+    let iArr = []
+    let start0 = 0
+    for (let i = 0; i < tmpWordArr.length; i++) {
+      if (ctx.measureText(tmpWordArr.slice(start0, i).join('')).width > w / rate) {
+        iArr.push(i - 1)
+        start0 += i - 1
+      }
+    }
+    let start = 0
+    for (let j = 0; j < iArr.length; j++) {
+      wordArr.push(tmpWordArr.slice(start, iArr[j]))
+      start = iArr[j]
+      if (j == iArr.length - 1 && start < tmpWordArr.length) {
+        wordArr.push(tmpWordArr.slice(start))
+      }
+    }
+    if (iArr.length == 0) {
+      wordArr.push([word])
+    }
+    return wordArr
   }
 }
