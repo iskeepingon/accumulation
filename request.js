@@ -1,20 +1,38 @@
-import urls from './url'
-import md5 from './md5'
-import main from './main'
+import md5 from './lib/md5'
+import ls from './localStorage'
+import util from './lib/util'
+import silentLogin from './silentLogin'
 
-function randomWord(randomFlag, min, max) {
-  // 生成随机字符串
-  let str = ''
-  let arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-  let range = min
-  if (randomFlag) {
-    range = Math.round(Math.random() * (max - min)) + min
+let urls = {
+  test: '%EC%B5%9C%EA%B3%A0l94JPYM08l%0AtlkDZ00TjK%0A68Tyavx2VqwL'
+}
+
+function computeTimeStamp() {
+  //计算时间戳
+  //timeDiff是服务端时间减客户端时间的时间差
+  let timeDiff = ls.get(ls.timeDiff)
+  let now = (new Date()).getTime()
+  if (typeof timeDiff == 'undefined') {
+    return now
+  } else {
+    return now + timeDiff
   }
-  for (let i = 0; i < range; i++) {
-    let pos = Math.round(Math.random() * (arr.length - 1))
-    str += arr[pos]
+}
+
+function updateUrl(url) {
+  //重写url
+  let _url = decodeURIComponent(url)
+  _url = _url.replace(/최고/g, '')
+  return _url
+}
+
+function setTimeDiff(nowFromServer) {
+  //设置timediff到本地存储
+  let nowFromClient = (new Date()).getTime()
+  let timeDiff = Math.abs(nowFromServer - nowFromClient)
+  if (timeDiff > 60 * 1000) {
+    ls.set(ls.timeDiff, timeDiff)
   }
-  return str
 }
 
 function queryToString(query, tags = ['', '']) {
@@ -30,34 +48,6 @@ function queryToString(query, tags = ['', '']) {
   return str
 }
 
-function computeTimeStamp() {
-  //计算时间戳
-  //timeDiff是服务端时间减客户端时间的时间差
-  let timeDiff = wx.getStorageSync('time_diff')
-  let now = (new Date()).getTime()
-  if (typeof timeDiff == 'undefined') {
-    return now
-  } else {
-    return now + timeDiff
-  }
-}
-
-function setTimeDiff(nowFromServer) {
-  //设置timediff到本地存储
-  let nowFromClient = (new Date()).getTime()
-  let timeDiff = Math.abs(nowFromServer - nowFromClient)
-  if (timeDiff > 60 * 1000) {
-    wx.setStorageSync('time_diff', timeDiff)
-  }
-}
-
-function updateUrl(url) {
-  //重写url
-  let _url = decodeURIComponent(url)
-  _url = _url.replace(/최고/g, '')
-  return _url
-}
-
 function createLink(linkData) {
   //生成link
   let link = queryToString(linkData, ['&', '='])
@@ -65,14 +55,16 @@ function createLink(linkData) {
 }
 
 function createResponseData(linkData, nonce) {
+  let mlinkData = util.clone(linkData)
+  let mnonce = util.clone(nonce)
   //生成responseData
   let responseData = ''
-  let keys = Object.keys(linkData)
+  let keys = Object.keys(mlinkData)
   if (keys.length > 0) {
-    linkData.nonce = nonce
-    responseData = queryToString(linkData, ['', ''])
+    mlinkData.nonce = mnonce
+    responseData = queryToString(mlinkData, ['', ''])
   } else {
-    responseData = responseData + 'nonce' + nonce
+    responseData = responseData + 'nonce' + mnonce
   }
   return responseData
 }
@@ -87,23 +79,59 @@ function createSign(test, responseData, timestamp, data) {
   return md5(md5Data)
 }
 
-function request({url, data, nextCallback, method = 'get', linkData = {}, toast = true, neterr = false, errtips = true, toasttexy = '', pageInitCallback}) {
+function request(
+  {
+    url,
+    data,
+    nextCallback,
+    method = 'get',
+    linkData = {},
+    isShowLoading = true,
+    neterr = false,
+    errtips = true,
+    loadingText = ''
+  }
+) {
   // 参数规则
   // url 请求地址，
   // data post请求用到的，
   // method 请求方式，
   // linkData url中的参数，
-  // toast 加载进度条，
+  // isShowLoading 加载进度条，
   // neterr 网络超时提示，
   // errtips 交互错误提示，
-  // toasttexy 加载框提示文案 toast开启后toasttexy才能生效
-  requestProxy({url, data, nextCallback, method, linkData, toast, neterr, errtips, toasttexy, pageInitCallback})
+  // loadingText 加载框提示文案 isShowLoading开启后loadingText才能生效
+  requestProxy(
+    {
+      url,
+      data,
+      nextCallback,
+      method,
+      linkData,
+      isShowLoading,
+      neterr,
+      errtips,
+      loadingText
+    }
+  )
 }
 
-function requestProxy({url, data, nextCallback, method = 'get', linkData = {}, toast = true, neterr = false, errtips = true, toasttexy = '', pageInitCallback}) {
-  if (toast == true) {
+function requestProxy(
+  {
+    url,
+    data,
+    nextCallback,
+    method = 'get',
+    linkData = {},
+    isShowLoading = true,
+    neterr = false,
+    errtips = true,
+    loadingText = ''
+  }
+) {
+  if (isShowLoading == true) {
     wx.showToast({
-      title: toasttexy,
+      title: loadingText,
       icon: 'loading',
       mask: true,
       duration: 10000
@@ -112,46 +140,66 @@ function requestProxy({url, data, nextCallback, method = 'get', linkData = {}, t
   //时间戳
   let timestamp = computeTimeStamp()
   //随机字符串
-  let nonce = randomWord(false, 20)
+  let nonce = util.randomWord(false, 20)
   //{name:'name'}转&name=name
   let link = createLink(linkData)
   let responseData = createResponseData(linkData, nonce)
   let sign = createSign(urls.test, responseData, timestamp, data)
-  let _url = updateUrl(url)
-
+  let _url = util.updateUrl(url)
   wx.request({
     url: _url + '?sign=' + sign + link + '&nonce=' + nonce,
     method: method,
     data: JSON.stringify(data),
     header: {
       'content-type': 'application/json',
-      'MINIAPP-Authorization': wx.getStorageSync('token'),
+      'MINIAPP-Authorization': ls.get(ls.token),
       'X-ZZ-Timestamp': timestamp,
-      'X-ZZ-Device-AppId': urls.appid,
-      'v': '1.4.0',
-      'X-ZZ-Wechat-Version': wx.getStorageSync('WechatVersion'),
-      'X-ZZ-Open-Id': wx.getStorageSync('openid'),
-      'X-ZZ-Device-Version': wx.getStorageSync('DeviceVersion')
+      'X-ZZ-Device-AppId': ls.get(ls.appid),
+      'v': ls.get(ls.version),
+      'X-ZZ-Wechat-Version': ls.get(ls.wechatVersion),
+      'X-ZZ-Open-Id': ls.get(ls.openid),
+      'X-ZZ-Device-Version': ls.get(ls.deviceVersion)
     },
     success: (res) => {
-      if (toast == true) {
+      if (isShowLoading == true) {
         wx.hideToast()
       }
       if (res.data.code == 0) {
         nextCallback(res.data)
-      } else if (res.data.code == 100031 || res.data.code == 100043 || res.code == 120006) {
+      } else if (res.data.code == 100031 || res.data.code == 100043) {
         // 100031 当前登录失效
         // 100043 token为空
-        // 120006 该账号未注册，请检查账号或立刻注册
-        login(function () {
-          if (typeof pageInitCallback == 'function') {
-            pageInitCallback()
-          }
+        silentLogin(function () {
+          requestProxy(
+            {
+              url,
+              data,
+              nextCallback,
+              method,
+              linkData,
+              isShowLoading,
+              neterr,
+              errtips,
+              loadingText
+            }
+          )
         })
       } else if (res.data.code == 100058) {
         //您的系统时间不正确 存在时间差
         setTimeDiff(res.data.now)
-        requestProxy(url, data, nextCallback, method, linkData, toast, neterr, errtips, toasttexy)
+        requestProxy(
+          {
+            url,
+            data,
+            nextCallback,
+            method,
+            linkData,
+            isShowLoading,
+            neterr,
+            errtips,
+            loadingText
+          }
+        )
       } else {
         // 非正常返回提示
         // 260031 订单同步信息异常，稍后系统会自动修复，敬请谅解，谢谢
@@ -160,6 +208,7 @@ function requestProxy({url, data, nextCallback, method = 'get', linkData = {}, t
         // 160004
         // 120017 注册失败，请稍后重试
         // 100063
+        // 120006 该账号未注册，请检查账号或立刻注册
         if (errtips == true) {
           wx.showModal({
             title: '温馨提示',
@@ -171,20 +220,22 @@ function requestProxy({url, data, nextCallback, method = 'get', linkData = {}, t
       }
     },
     fail: (err) => {
-      //请求失败
-      if (toast == true) {
+      //弱网环境，返回-1 ，并提示
+      if (isShowLoading == true) {
         wx.hideToast()
       }
+      const title = '您的网络好像不太给力，请稍后重试'
       if (neterr == true) {
         wx.showToast({
-          title: '您的网络好像不太给力，请稍后重试',
+          title: title,
           icon: 'none',
           mask: true,
           duration: 2000
         })
       }
       let data = {
-        code: -1
+        code: -1,
+        message: title
       }
       nextCallback(data)
     }

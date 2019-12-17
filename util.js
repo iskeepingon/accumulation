@@ -1,8 +1,22 @@
+import RSA from './lib/wx_rsa'
+
 const Util = function () {
   this.version = '1.0'
 }
 
 Util.prototype = {
+  getImageInfoByImg(imgUrl) {
+    return new Promise((resolve, reject) => {
+      let img = new Image()
+      img.onload = () => {
+        resolve(img)
+      }
+      img.onerror = () => {
+        reject()
+      }
+      img.src = imgUrl
+    })
+  },
   isEmpty(field) {
     //判断值是否为空
     if (typeof field == 'undefined' || ('' + field).trim() == '') {
@@ -12,11 +26,11 @@ Util.prototype = {
   },
   isNumber(field) {
     //判断值是否为数字
-    let fieldV = parseFloat(field)
-    if (typeof field !== 'undefined' && isNaN(fieldV) === false && field == fieldV) {
+    if (typeof field === 'number') {
       return true
+    } else {
+      return false
     }
-    return false
   },
   isPhone(phone) {
     // 手机号校验
@@ -25,7 +39,7 @@ Util.prototype = {
   },
   isCreditNo(creditNo) {
     // 身份证号码校验
-    var creditNoReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
+    let creditNoReg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/
     return creditNoReg.test(creditNo)
   },
   clone(jsonObj) {
@@ -36,10 +50,10 @@ Util.prototype = {
       return {}
     }
   },
-  toFixed(num, decimal) {
+  toFixed(num, decimal = 2) {
     // 数字保留num 保留decimal位小数 并进行四舍五入
     function _round(num, decimal) {
-      if (isNaN(num)) {
+      if (isNaN(num) || num == 0) {
         return 0
       }
       const p1 = Math.pow(10, decimal + 1)
@@ -47,20 +61,26 @@ Util.prototype = {
       return Math.round(num * p1 / 10) / p2
     }
 
+    if (num == 0) {
+      return new Number(0).toFixed(decimal)
+    }
     return _round(num, decimal).toFixed(decimal)
   },
-  createYMD(timestamp) {
+  createYMDHMS(timestamp) {
     // 根据时间戳获取年月日 如果没有时间戳 则获取当前的时间戳
-    let date
+    let d
     if (isNaN(timestamp)) {
-      date = new Date()
+      d = new Date()
     } else {
-      date = new Date(timestamp)
+      d = new Date(timestamp)
     }
-    let y = date.getFullYear()
-    let m = date.getMonth() + 1
-    let d = date.getDate()
-    return [y, m, d].join('.')
+    let year = d.getFullYear()
+    let month = d.getMonth() + 1
+    let date = d.getDate()
+    let hour = d.getHours()
+    let minute = d.getMinutes()
+    let second = d.getSeconds()
+    return {year, month, date, hour, minute, second}
   },
   requestTry(promise, totalCount) {
     /***
@@ -120,29 +140,6 @@ Util.prototype = {
     }
     return encStr
   },
-  createYMDHMS(timestamp) {
-    // 根据时间戳获取年月日 如果没有时间戳 则获取当前的时间戳
-    let dateObj
-    if (isNaN(timestamp)) {
-      dateObj = new Date()
-    } else {
-      dateObj = new Date(timestamp)
-    }
-    let year = dateObj.getFullYear()
-    let month = dateObj.getMonth() + 1
-    let date = dateObj.getDate()
-    let hour = dateObj.getHours()
-    let minute = dateObj.getMinutes()
-    let second = dateObj.getSeconds()
-    return {
-      year,
-      month,
-      date,
-      hour,
-      minute,
-      second
-    }
-  },
   isChinese(str) {
     //是否是中文
     let reg = /^[\u4e00-\u9fa5]+$/
@@ -175,5 +172,282 @@ Util.prototype = {
       wordArr.push([word])
     }
     return wordArr
+  },
+  isValidIP(ip) {
+    let reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/
+    return reg.test(ip)
+  },
+  bZero(digit) {
+    if (digit < 10) {
+      return '0' + digit
+    } else {
+      return digit
+    }
+  },
+  getLocation(nextCallback, type = 'gcj02') {
+    wx.getLocation({
+      type: type,
+      altitude: true,
+      success: res => {
+        let data = {
+          code: 'getLocation:ok',
+          latitude: res.latitude,
+          longitude: res.longitude
+        }
+        nextCallback(data)
+      },
+      fail: err => {
+        let data = {
+          code: 'getLocation:fail'
+        }
+        nextCallback(data)
+      }
+    })
+  },
+  getTime(timestamp) {
+    let second = timestamp / 1000 // 秒数
+
+    let day = Math.floor(second / 3600 / 24) // 天数位
+    let dayStr = this.bZero(day.toString())
+
+    let hr = Math.floor((second - day * 3600 * 24) / 3600) // 小时位
+    let hrStr = this.bZero(hr.toString())
+
+    let min = Math.floor((second - day * 3600 * 24 - hr * 3600) / 60) // 分钟位
+    let minStr = this.bZero(min.toString())
+
+    let sec = second - day * 3600 * 24 - hr * 3600 - min * 60 // 秒位
+    let secStr = sec.toString()
+    secStr = this.bZero(parseInt(secStr))
+
+    return {
+      second: secStr,
+      minute: minStr,
+      hour: hrStr,
+      day: dayStr
+    }
+  },
+  chooseUploadImage() {
+    //选择图片并且上传图片
+    function _chooseImage() {
+      //图片选择
+      return new Promise((resolve, reject) => {
+        wx.chooseImage({
+          count: 1,
+          sizeType: ['original', 'compressed'],  //可选择原图或压缩后的图片
+          sourceType: ['album', 'camera'], //可选择性开放访问相册、相机
+          success: res => {
+            let tempFilesSize = res.tempFiles[0].size
+            if (tempFilesSize <= 5000000) {
+              resolve(res)
+            } else {
+              reject()
+            }
+          },
+          fail: err => {
+            reject(err)
+          }
+        })
+      })
+    }
+
+    function _uploadImage(res) {
+      //文件上传
+      return new Promise((resolve, reject) => {
+        wx.showToast({
+          title: '正在上传',
+          icon: 'loading',
+          mask: true,
+          duration: 15000
+        })
+        wx.uploadFile({
+          url: '',
+          filePath: res.tempFilePaths[0],
+          name: 'file',
+          header: {
+            'content-type': 'multipart/form-data',
+            'X-ZZ-Device-AppId': '',
+            'MINIAPP-Authorization': '',
+            'v': ''
+          },
+          success(ret) {
+            wx.hideToast()
+            resolve(ret)
+          },
+          fail(err) {
+            wx.hideToast()
+            reject(err)
+          }
+        })
+      })
+    }
+
+    return new Promise((resolve, reject) => {
+      _chooseImage().then(res => {
+        _uploadImage(res).then(ret => {
+          resolve(ret)
+        }).catch(err => {
+          reject(err)
+        })
+      }).catch(err => {
+        reject(err)
+      })
+    })
+  },
+  downloadFile(imgSrc = '') {
+    //下载单张图片
+    return new Promise((resolve, reject) => {
+      wx.downloadFile({
+        url: imgSrc,
+        success: (res) => {
+          resolve(res)
+        },
+        fail: (err) => {
+          reject(err)
+        }
+      })
+    })
+  },
+  downloadFiles(imgArr = []) {
+    //下载多张图片
+    let _downloadFile = (imgArr, result, i, resolve, reject) => {
+      this.downloadFile(imgArr[i]).then(res => {
+        result.push(res)
+        if (result.length == imgArr.length) {
+          resolve(result)
+        } else {
+          _downloadFile(imgArr, result, i + 1, resolve, reject)
+        }
+      }).catch(err => {
+        reject(err)
+      })
+    }
+    let result = []
+    return new Promise((resolve, reject) => {
+      let i = 0
+      _downloadFile(imgArr, result, i, resolve, reject)
+    })
+  },
+  getImageInfo(imgSrc = '') {
+    //获取单张图片信息
+    return new Promise((resolve, reject) => {
+      wx.getImageInfo({
+        src: imgSrc,
+        success(res) {
+          resolve(res)
+        },
+        fail(err) {
+          reject(err)
+        }
+      })
+    })
+  },
+  getImagesInfo(imgArr = []) {
+    //获取多张图片信息
+    let _getImageInfo = (imgArr, result, i, resolve, reject) => {
+      this.getImageInfo(imgArr[i]).then(res => {
+        result.push(res)
+        if (result.length == imgArr.length) {
+          resolve(result)
+        } else {
+          _getImageInfo(imgArr, result, i + 1, resolve, reject)
+        }
+      }).catch(err => {
+        reject(err)
+      })
+    }
+    let result = []
+    return new Promise((resolve, reject) => {
+      let i = 0
+      _getImageInfo(imgArr, result, i, resolve, reject)
+    })
+  },
+  saveImageToPhotosAlbum(res) {
+    //保存单张图片到相册
+    return new Promise((resolve, reject) => {
+      wx.saveImageToPhotosAlbum({
+        filePath: res.tempFilePath,
+        success: function (data) {
+          resolve(data)
+        },
+        fail: function (err) {
+          reject(err)
+        }
+      })
+    })
+  },
+  saveImagesToPhotosAlbum(images = []) {
+    //保存多张图片到相册
+    let _downloadFile = (images, i, resolve, reject) => {
+      this.downloadFile(images[i]).then((res) => {
+        this.saveImageToPhotosAlbum(res).then((ret) => {
+          if (i == images.length - 1) {
+            resolve(ret)
+          } else {
+            _downloadFile(images, i + 1, resolve, reject)
+          }
+        }).catch((err) => {
+          reject(err)
+        })
+      }).catch((err) => {
+        reject(err)
+      })
+    }
+    return new Promise((resolve, reject) => {
+      let i = 0
+      _downloadFile(images, i, resolve, reject)
+    })
+  },
+  createTempFilePath(canvasId) {
+    //生成图片的临时路径
+    wx.showToast({
+      icon: 'loading',
+      mask: true,
+      duration: 10000
+    })
+    return new Promise((resolve, reject) => {
+      wx.canvasToTempFilePath({
+        x: 0,
+        y: 0,
+        canvasId: canvasId,
+        success: (res) => {
+          wx.hideToast()
+          resolve(res.tempFilePath)
+        },
+        fail: (err) => {
+          wx.hideToast()
+          reject(err)
+        }
+      })
+    })
+  },
+  setClipboardData(text = '') {
+    //保存text到剪切板
+    return new Promise((resolve, reject) => {
+      wx.setClipboardData({
+        data: text,
+        success(res) {
+          resolve(res)
+        },
+        fail(err) {
+          reject(err)
+        }
+      })
+    })
+  },
+  compressImage(img, quality) {
+    //图片压缩
+    return new Promise((resolve, reject) => {
+      wx.compressImage({
+        src: img,
+        quality: quality,
+        success(res) {
+          resolve(res)
+        },
+        fail(err) {
+          reject(err)
+        }
+      })
+    })
   }
 }

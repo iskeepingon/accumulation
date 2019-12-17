@@ -4,7 +4,7 @@
  * @param a,b 都表示矩形
  * @return true表示相交,false表示不相交
  */
-var isCollison = function (a, b) {
+let isCollison = function (a, b) {
   if (a.x > b.x + b.w || b.x > a.x + a.w || a.y > b.y + b.h || b.y > a.y + a.h) {
     return false
   } else {
@@ -13,7 +13,7 @@ var isCollison = function (a, b) {
 }
 
 
-var flag = isCollison({x: 0, y: 0, w: 2, h: 2}, {x: 3, y: 2, w: 2, h: 2})
-var flag1 = isCollison({x: 0, y: 0, w: 2, h: 2}, {x: 1, y: 1, w: 2, h: 2})
+let flag = isCollison({x: 0, y: 0, w: 2, h: 2}, {x: 3, y: 2, w: 2, h: 2})
+let flag1 = isCollison({x: 0, y: 0, w: 2, h: 2}, {x: 1, y: 1, w: 2, h: 2})
 console.log(flag)
 console.log(flag1)

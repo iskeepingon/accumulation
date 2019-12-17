@@ -2,11 +2,11 @@
  * uuid
  */
 
-var uuid = function () {
+let uuid = function () {
   //重现一样的概率是Math.pow(1/16,30)*s[19]的概率
-  var s = []
-  var hexDigits = '0123456789abcdef'
-  for (var i = 0; i < 36; i++) {
+  let s = []
+  let hexDigits = '0123456789abcdef'
+  for (let i = 0; i < 36; i++) {
     s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1)
     // s[i] = hexDigits.substr(Math.floor(Math.random() * 16), 1)
   }
@@ -14,9 +14,9 @@ var uuid = function () {
   s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1) // bits 6-7 of the clock_seq_hi_and_reserved to 01
   s[8] = s[13] = s[18] = s[23] = '-'
 
-  var uuid = s.join('')
+  let uuid = s.join('')
   return uuid
 }
 
-var uid = uuid()
+let uid = uuid()
 console.log(uid)

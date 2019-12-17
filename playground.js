@@ -21,9 +21,9 @@ class Playground {
    */
 
   getRest(num1, num2) {
-    var num11 = num1
-    var num22 = num2
-    var rest
+    let num11 = num1
+    let num22 = num2
+    let rest
     if (num11 / num22 < 1) {
       rest = num11
     } else {
@@ -64,12 +64,12 @@ class Playground {
       let hudu = (l - h / 2) / r
       x = r * Math.cos(hudu)
       y = h / 2 + r * Math.sin(hudu)
-    } else if (l >= (h / 2 + PI * r) && l <= ( h + PI * r)) {
+    } else if (l >= (h / 2 + PI * r) && l <= (h + PI * r)) {
       x = -r
       y = l - (h / 2 + PI * r)
-    } else if (l > ( h + PI * r) && l <= (3 * h / 2 + PI * r)) {
+    } else if (l > (h + PI * r) && l <= (3 * h / 2 + PI * r)) {
       x = -r
-      y = -(l - ( h + PI * r))
+      y = -(l - (h + PI * r))
     } else if (l > (3 * h / 2 + PI * r) && l < 2 * h + 2 * PI * r) {
       let hudu = (l - 3 * h / 2 - PI * r) / r
       x = -r * Math.cos(hudu)

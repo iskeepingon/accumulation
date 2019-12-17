@@ -46,7 +46,7 @@ axios.interceptors.response.use(res => {
     }
   }
   return res
-}, async(error) => {
+}, async (error) => {
   if (error.response.status === 401) {
     //'请先登录'
   } else if (error.response.status === 500) {

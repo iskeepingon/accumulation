@@ -10,7 +10,7 @@ function Router() {
 }
 
 Router.prototype.setup = function (routemap, defaultFunc) {
-  var rule
+  let rule
   this.defaultFunc = defaultFunc
   for (rule in routemap) {
     if (!routemap.hasOwnProperty(rule)) {
@@ -24,10 +24,11 @@ Router.prototype.setup = function (routemap, defaultFunc) {
 }
 
 Router.prototype.start = function () {
-  var that = this
+  let that = this
+
   function hashChange() {
-    var hash = window.location.hash, route, matchResult
-    for (var routeIndex in that.routemap) {
+    let hash = window.location.hash, route, matchResult
+    for (let routeIndex in that.routemap) {
       route = that.routemap[routeIndex]
       matchResult = hash.match(route.rule)
       if (matchResult) {
@@ -39,10 +40,10 @@ Router.prototype.start = function () {
   }
 
   hashChange()
-  window.addEventListener("hashchange", hashChange)
+  window.addEventListener('hashchange', hashChange)
 }
 
-var router = new Router()
+let router = new Router()
 router.setup({
   '#/helin/(.*)/(.*)': function (cate, id) {
     console.log('list', cate, id)

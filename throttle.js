@@ -3,7 +3,7 @@ function throttle(callback, time) {
   let timer
   return function () {
     if (!timer) {
-      timer = setTimeout(()=> {
+      timer = setTimeout(() => {
         timer = undefined
         callback.apply(this, arguments)
       }, time || 1000)

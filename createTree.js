@@ -3,10 +3,10 @@
  * @return children
  */
 
-var findChildren = function (arr, parentId) {
-  var children = []
-  for (var i = 0; i < arr.length; i++) {
-    var item = arr[i]
+let findChildren = function (arr, parentId) {
+  let children = []
+  for (let i = 0; i < arr.length; i++) {
+    let item = arr[i]
     if (item.parentId === parentId) {
       children.push(item)
     }
@@ -19,13 +19,13 @@ var findChildren = function (arr, parentId) {
  * @return tree structure
  */
 
-var createTree = function (arr, rootId) {
-  var children = findChildren(arr, rootId)
+let createTree = function (arr, rootId) {
+  let children = findChildren(arr, rootId)
   if (children.length <= 0) {
     return
   }
-  for (var i = 0; i < children.length; i++) {
-    var childTree = createTree(arr, children[i].id)
+  for (let i = 0; i < children.length; i++) {
+    let childTree = createTree(arr, children[i].id)
     if (childTree) {
       children[i]['children'] = childTree
     }
@@ -33,7 +33,7 @@ var createTree = function (arr, rootId) {
   return children
 }
 
-var arr = [
+let arr = [
   {
     id: 1,
     parentId: 0,
@@ -71,5 +71,5 @@ var arr = [
   }
 ]
 
-var tree = createTree(arr, 0)
+let tree = createTree(arr, 0)
 console.log(JSON.stringify(tree))

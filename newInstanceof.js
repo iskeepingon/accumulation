@@ -5,8 +5,8 @@
  * @return 如果实例是由构造函数创建的则返回true
  */
 
-var newInstanceof = function (object, constructor) {
-  var rightProto = constructor.prototype
+let newInstanceof = function (object, constructor) {
+  let rightProto = constructor.prototype
   object = object.__proto__
   while (true) {
     if (object === null) {
@@ -19,5 +19,5 @@ var newInstanceof = function (object, constructor) {
   }
 }
 
-var flag = newInstanceof({}, Object)
+let flag = newInstanceof({}, Object)
 console.log(flag)

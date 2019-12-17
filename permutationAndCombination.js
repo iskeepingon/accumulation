@@ -1,6 +1,5 @@
 //排列组合
 
-
 const oneArr = function (arr) {
   //一个规格维度时创建规格组合
   let res = []

@@ -2,7 +2,7 @@
 //   {{cutdownCount==0?(cutdowned?'重新获取':'获取验证码'):(cutdownCount+'s')}}
 // </a>
 export default {
-  data () {
+  data() {
     return {
       cutdownCount: 0,//倒计时的时间 60s 59s 58s 57s...
       cutdownTimer: 0,//倒计时定时器的timer
@@ -11,7 +11,7 @@ export default {
     }
   },
   methods: {
-    getCode () {
+    getCode() {
       if (this.isCutdowning) {
         return
       }
@@ -30,7 +30,7 @@ export default {
         }
       })
     },
-    cutdown ({count = 60, gap = 1000, onStart, onGoing, onFinish}) {
+    cutdown({count = 60, gap = 1000, onStart, onGoing, onFinish}) {
       //倒计时
       if (typeof onStart === 'function') {
         onStart(count)
