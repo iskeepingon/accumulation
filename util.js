@@ -66,20 +66,14 @@ Util.prototype = {
     }
     return _round(num, decimal).toFixed(decimal)
   },
-  createYMDHMS(timestamp) {
-    // 根据时间戳获取年月日 如果没有时间戳 则获取当前的时间戳
-    let d
-    if (isNaN(timestamp)) {
-      d = new Date()
-    } else {
-      d = new Date(timestamp)
-    }
-    let year = d.getFullYear()
-    let month = d.getMonth() + 1
-    let date = d.getDate()
-    let hour = d.getHours()
-    let minute = d.getMinutes()
-    let second = d.getSeconds()
+  createYMDHMS(timestamp = new Date().getTime()) {
+    let o = new Date(timestamp)
+    let year = o.getFullYear()
+    let month = o.getMonth() + 1
+    let date = o.getDate()
+    let hour = o.getHours()
+    let minute = o.getMinutes()
+    let second = o.getSeconds()
     return {year, month, date, hour, minute, second}
   },
   requestTry(promise, totalCount) {
