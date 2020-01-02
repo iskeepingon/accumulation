@@ -443,5 +443,34 @@ Util.prototype = {
         }
       })
     })
+  },
+  mergeObject(des, source) {
+    let res = {}
+    let desKeys = Object.keys(des)
+    let sourceKey = Object.keys(source)
+    let mergeKeys = []
+    let set = new Set(desKeys)
+    for (let i = 0; i < sourceKey.length; i++) {
+      set.add(sourceKey[i])
+    }
+    console.log(set)
+
+    return res
+  },
+  getScrollbarWidth() {
+    let odiv = document.createElement('div'),//创建一个div
+      styles = {
+        position: 'absolute',
+        top: 0,
+        left: '9999px',
+        width: '100px',
+        height: '100px',
+        overflowY: 'scroll'//让他有滚动条
+      }, i, scrollbarWidth
+    for (i in styles) odiv.style[i] = styles[i]
+    document.body.appendChild(odiv)//把div添加到body中
+    scrollbarWidth = odiv.offsetWidth - odiv.clientWidth//相减
+    odiv.remove()//移除创建的div
+    return scrollbarWidth//返回滚动条宽度
   }
 }
