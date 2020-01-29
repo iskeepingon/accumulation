@@ -7,16 +7,20 @@ function IPromise(callback) {
 
   let resolve = () => {
     this.status = 'fulfilled'
-    this.successCallbacks.forEach((successCallback) => {
-      successCallback(this.data)
-    })
+    setTimeout(() => {
+      this.successCallbacks.forEach((successCallback) => {
+        successCallback(this.data)
+      })
+    }, 0)
   }
 
   let reject = () => {
     this.status = 'rejected'
-    this.failCallbacks.forEach((failCallback) => {
-      failCallback(this.reason)
-    })
+    setTimeout(() => {
+      this.failCallbacks.forEach((failCallback) => {
+        failCallback(this.reason)
+      })
+    }, 0)
   }
 
   if (typeof callback === 'function') {
@@ -29,7 +33,12 @@ IPromise.prototype = {
     return new IPromise((resolve, reject) => {
 
       function success(value) {
-        let res = typeof successCallback === 'function' ? successCallback(value) : value
+        let res
+        if (typeof successCallback === 'function') {
+          res = successCallback(value)
+        } else {
+          res = value
+        }
         if (res && typeof res['then'] === 'function') {
           res.then(function (value) {
             resolve(value)
@@ -40,7 +49,9 @@ IPromise.prototype = {
       }
 
       function fail(reason) {
-        reason = typeof failCallback === 'function' ? failCallback(reason) : reason
+        if (typeof failCallback === 'function') {
+          reason = failCallback(reason)
+        }
         reject(reason)
       }
 
