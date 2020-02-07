@@ -1,19 +1,19 @@
 /**
  * 选择排序
  */
-let selectSort = function (arr) {
-  for (let i = 0; i < arr.length - 1; i++) {
-    let min
-    for (let j = i + 1; j < arr.length; j++) {
-      if (arr[i] > arr[j]) {
-        min = arr[j]
-        arr[j] = arr[i]
-        arr[i] = min
-      }
-    }
-  }
-}
-// let selectSortArr = [1, 2, -1, -9, 8, -80]
+// let selectSort = function (arr) {
+//   for (let i = 0; i < arr.length - 1; i++) {
+//     let min
+//     for (let j = i + 1; j < arr.length; j++) {
+//       if (arr[i] > arr[j]) {
+//         min = arr[j]
+//         arr[j] = arr[i]
+//         arr[i] = min
+//       }
+//     }
+//   }
+// }
+// let selectSortArr = [176, 178, 170, 171, 181, 168, 173, 175]
 // selectSort(selectSortArr)
 // console.log(selectSortArr)
 
@@ -64,22 +64,20 @@ let quickSort = function (arr) {
  * 插入排序
  */
 let insertSort = function (arr) {
-  let arrTemp = [arr[0]]
+  if (arr == null || arr.length < 2) {
+    return
+  }
   for (let i = 1; i < arr.length; i++) {
-    for (let j = 0; j < i; j++) {
-      if (arr[i] < arrTemp[j]) {
-        arrTemp.splice(j, 0, arr[i])
-        break
-      } else if (j === i - 1) {
-        arrTemp.push(arr[i])
-      }
+    for (let j = i - 1; j >= 0 && arr[j] > arr[j + 1]; j--) {
+      let temp = arr[j]
+      arr[j] = arr[j + 1]
+      arr[j + 1] = temp
     }
   }
-  return arrTemp
 }
-// let insertSortArr = [1, 2, 9, 0, 3, 6]
-// let insertSortArr1 = insertSort(insertSortArr)
-// console.log(insertSortArr1)
+let insertSortArr = [1, 2, 9, 0, 3, 6]
+insertSort(insertSortArr)
+console.log(insertSortArr)
 
 /**
  * 合并两个已经排好序的数组
@@ -168,7 +166,7 @@ let createBigData = function (len) {
 let getCurrentTime = function () {
   return (new Date()).getTime()
 }
-let start = getCurrentTime()
-let bigDataSortData = bigDataSort(createBigData(10000000), 50000)//对一千万个数字排序
-end = getCurrentTime()
-console.log('end-start=', (end - start) / 1000, 's')
+// let start = getCurrentTime()
+// let bigDataSortData = bigDataSort(createBigData(10000000), 50000)//对一千万个数字排序
+// end = getCurrentTime()
+// console.log('end-start=', (end - start) / 1000, 's')
