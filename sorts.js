@@ -170,3 +170,4 @@ let getCurrentTime = function () {
 // let bigDataSortData = bigDataSort(createBigData(10000000), 50000)//对一千万个数字排序
 // end = getCurrentTime()
 // console.log('end-start=', (end - start) / 1000, 's')
+
