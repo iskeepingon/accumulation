@@ -3,18 +3,18 @@ class Runway {
    * @param w 虚拟跑道的宽度
    * @param h 虚拟跑道的长度
    * @param gap 虚拟跑道之间的距离
-   * @param x,y 虚拟跑道中心坐标
+   * @param ox,oy 虚拟跑道中心坐标
    * @param d 最里面的跑道的真实距离
    * 注意：
    * 1，w, h, gap, n, x, y都是虚拟数值，d是真实数值 不明白问我
    * 2，运动员是逆时针跑动
    */
-  constructor(w, h, gap, x, y, d) {
+  constructor(w, h, gap, ox, oy, d) {
     this.w = w
     this.h = h
     this.gap = gap
-    this.x = x
-    this.y = y
+    this.ox = ox
+    this.oy = oy
     this.d = d
   }
 
@@ -89,30 +89,17 @@ class Runway {
     }
 
     return {
-      x: x + this.x,
-      y: y + this.y
+      x: x + this.ox,
+      y: y + this.oy
     }
   }
 }
 
 export default Runway
 
-
 let w = 600
 let h = 1200
 let r = w / 2
-
-/**
- * @param w 虚拟跑道的宽度
- * @param h 虚拟跑道的长度
- * @param gap 虚拟跑道之间的距离
- * @param x,y 虚拟跑道中心坐标
- * @param d 最里面的跑道的真实距离
- * 注意：
- * 1，w, h, gap, n, x, y都是虚拟数值，d是真实数值 不明白问我
- * 2，运动员是逆时针跑动
- */
-
-let p = new Runway(w, h, 30, 375, 600, 2 * Math.PI * r + 2400)
+let p = new Runway(w, h, 30, 375, 800, 2 * Math.PI * r + 2 * h)
 let coordinate = p.getCoordinate(h / 2, 1)
-console.log(coordinate)
+console.log(coordinate)//{x:675,y:800}
