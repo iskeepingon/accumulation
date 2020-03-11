@@ -13,7 +13,7 @@ function _recursion(promise, resolve, reject, count, totalCount) {
     promise().then((res) => {
       resolve(res)
     }).catch((err) => {
-      if (count > totalCount) {
+      if (count >= totalCount) {
         reject(err)
         return
       }
@@ -35,7 +35,7 @@ function requestTry(promise, totalCount) {
     promise().then((res) => {
       resolve(res)
     }).catch((err) => {
-      if (count > totalCount) {
+      if (count >= totalCount) {
         reject(err)
         return
       }
@@ -58,7 +58,7 @@ function p() {
   })
 }
 
-requestTry(p, 5)
+requestTry(p, 1)
   .then((res) => {
     console.log(res)
   }).catch((err) => {
