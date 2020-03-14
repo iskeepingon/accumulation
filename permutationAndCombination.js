@@ -1,89 +1,111 @@
-//排列组合
+/**
+ * @function 递归
+ * @param newInput{Array}
+ * @param res{Array}
+ * @param count{Number}
+ * @param arr{Array}
+ */
+const recursion = (newInput, res, count, arr) => {
+  if (count <= newInput.length - 1) {
+    for (let j = 0; j < newInput[count].children.length; j++) {
+      arr[count] = j
+      if (newInput.length - 1 == count) {
+        let temp = {}
+        let k = 0
+        while (k <= newInput.length - 1) {
+          temp[newInput[k].id] = newInput[k].children[arr[k]]
+          k++
+        }
+        res.push(temp)
+      } else {
+        recursion(newInput, res, count + 1, arr)
+      }
+    }
+  }
+}
 
-const oneArr = function (arr) {
-  //一个规格维度时创建规格组合
-  let res = []
-  arr.forEach((item) => {
-    item.forEach((item1) => {
-      res.push([item1])
-    })
+/**
+ * @function 将input数组中的元素剔除（该元素的children为空数组）
+ * @param input {Array}
+ * @returns {Array}
+ */
+const createNewInput = (input) => {
+  let newInput = []
+  input.forEach((item) => {
+    if (item.children.length <= 0) {
+
+    } else {
+      newInput.push(item)
+    }
   })
-  return res
+  return newInput
 }
 
-const mergeArr = function (arr, arr1) {
-  //两种规格维度时创建规格组合
-  let resultArr = []
-  for (let i = 0; i < arr.length; i++) {
-    if (arr1.length == 0) {
-      return this.oneArr([arr])
-    } else {
-      for (let j = 0; j < arr1.length; j++) {
-        resultArr.push([arr[i], arr1[j]])
+/**
+ * @param input {Array}
+ * @returns {Array}
+ */
+
+const zh = (input) => {
+  let newInput = createNewInput(input)
+  if (newInput.length == 0) {
+    return []
+  } else {
+    let res = []
+    recursion(newInput, res, 0, [])
+    /*if (0 <= newInput.length - 1) {
+      for (let i = 0; i < newInput[0].children.length; i++) {
+        if (newInput.length - 1 == 0) {
+          let temp = {}
+          temp[newInput[0].id] = newInput[0].children[i]
+          res.push(temp)
+        } else {
+          if (1 <= newInput.length - 1) {
+            for (let j = 0; j < newInput[1].children.length; j++) {
+              if (newInput.length - 1 == 1) {
+                let temp = {}
+                temp[newInput[0].id] = newInput[0].children[i]
+                temp[newInput[1].id] = newInput[1].children[j]
+                res.push(temp)
+              } else {
+                if (2 <= newInput.length - 1) {
+                  for (let k = 0; k < newInput[2].children.length; k++) {
+                    if (newInput.length - 1 == 2) {
+                      let temp = {}
+                      temp[newInput[0].id] = newInput[0].children[i]
+                      temp[newInput[1].id] = newInput[1].children[j]
+                      temp[newInput[2].id] = newInput[2].children[k]
+                      res.push(temp)
+                    }
+                  }
+                } else {
+
+                }
+              }
+            }
+          }
+        }
       }
-    }
+    }*/
+    return res
   }
-  return resultArr
 }
 
-const flat = function (arr) {
-  //将数组[1,2,[3,4]]转成[1,2,3,4]
-  let res = []
-  for (let i = 0; i < arr.length; i++) {
-    if (Array.isArray(arr[i])) {
-      for (let j = 0; j < arr[i].length; j++) {
-        res.push(arr[i][j])
-      }
-    } else {
-      res.push(arr[i])
-    }
-  }
-  return res
-}
 
-const permutationAndCombination = function (arr) {
-  //规格维度创建规格组合
-  if (arr.length == 1) {
-    return oneArr(arr)
-  } else if ((arr.length == 2)) {
-    return mergeArr(arr[0], arr[1])
-  } else if (arr.length > 2) {
-    let res
-    let i = 0
-    let tempArr = arr[i]
-    while (i < arr.length - 1) {
-      tempArr = mergeArr(tempArr, arr[i + 1])
-      for (let i = 0; i < tempArr.length; i++) {
-        tempArr[i] = flat(tempArr[i])//如果支持数组支持flat的话 tempArr[i] = tempArr[i].flat()
-      }
-      i++
-    }
-    return tempArr
-  }
-}
-//输入
-let arr1 = [
-  [{id: '1', specValue: '白色'}, {id: '1', specValue: '黑色'}]
+
+let input = [
+  {id: '1', name: '颜色', children: [{tid: '', name: '黑'}, {tid: '', name: '棕'}]},
+  {id: '2', name: '材质', children: [{tid: '', name: '牛皮'}]},
+  {id: '3', name: '尺码', children: [{tid: '', name: '40'}, {tid: '', name: '41'}, {tid: '', name: '42'}]}
 ]
 
-let arr2 = [
-  [{id: '1', specValue: '白色'}, {id: '1', specValue: '黑色'}],
-  [{id: '2', specValue: 'M'}, {id: '2', specValue: 'L'}]
+console.warn(zh(input))
+
+let output = [
+  {'1': {tid: '', name: '黑'}, '2': {tid: '', name: '牛皮'}, '3': {tid: '', name: '40'}},
+  {'1': {tid: '', name: '黑'}, '2': {tid: '', name: '牛皮'}, '3': {tid: '', name: '41'}},
+  {'1': {tid: '', name: '黑'}, '2': {tid: '', name: '牛皮'}, '3': {tid: '', name: '42'}},
+  {'1': {tid: '', name: '棕'}, '2': {tid: '', name: '牛皮'}, '3': {tid: '', name: '40'}},
+  {'1': {tid: '', name: '棕'}, '2': {tid: '', name: '牛皮'}, '3': {tid: '', name: '41'}},
+  {'1': {tid: '', name: '棕'}, '2': {tid: '', name: '牛皮'}, '3': {tid: '', name: '42'}}
 ]
-
-let arr3 = [
-  [{id: '1', specValue: '白色'}, {id: '1', specValue: '黑色'}],
-  [{id: '2', specValue: 'M'}, {id: '2', specValue: 'L'}],
-  [{id: '3', specValue: '大'}, {id: '3', specValue: '小'}],
-  [{id: '4', specValue: '100cc'}, {id: '4', specValue: '200cc'}]
-]
-
-let res1 = permutationAndCombination(arr1)
-let res2 = permutationAndCombination(arr2)
-let res3 = permutationAndCombination(arr3)
-//输出
-console.log(res1)
-console.log(res2)
-console.log(res3)
-
-
