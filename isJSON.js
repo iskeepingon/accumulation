@@ -1,5 +1,5 @@
-/**
- * @function 判断obj是否为json对象
+​/**
+ * @function 判断obj是否是[{},...]或者{}​
  * @param obj {any}
  * @returns {boolean}
  */
