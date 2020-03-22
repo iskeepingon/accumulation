@@ -60,11 +60,36 @@ let o = {
 
     }
   },
-  init(){
-    this.getData().then(()=>{
+  init() {
+    this.getData().then(() => {
       console.log('ok')
-    }).catch(()=>{
+    }).catch(() => {
       console.log('fail')
     })
   }
 }
+
+function Person(name) {
+  this.name = name
+  let flag = typeof this.getName != 'function'
+  console.log(1, this.__proto__)
+  if (flag) {
+    Person.prototype = {
+      constructor: Person,
+      getName: function () {
+        console.log(2, this.name)
+      }
+    }
+  }
+  console.log(3, this.__proto__)
+}
+
+console.log('--------------------')
+
+let p = new Person('sss')
+console.log(Person.prototype)//Person {constructor: [Function: Person],getName: [Function: getName] }
+console.log(p.__proto__)//Person {}
+console.log(p.getName)//undefined
+// let p1 = new Person('11')
+// console.log(p1.getName)//[Function: getName]
+
