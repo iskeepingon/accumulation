@@ -23,11 +23,11 @@ Counter.decrement()
 console.log(Counter.value()) // 1
 
 //示例二
-// let liDomList = document.querySelectorAll('li')
-// for (var i = 0; i < liDomList.length; i++) {
-//   (function (i) {
-//     liDomList[i].onclick = function () {
-//       console.log(i)
-//     }
-//   })(i)
-// }
+let liDomList = document.querySelectorAll('li')
+for (var i = 0; i < liDomList.length; i++) {
+  (function (i) {
+    liDomList[i].onclick = function () {
+      console.log(i)
+    }
+  })(i)
+}
