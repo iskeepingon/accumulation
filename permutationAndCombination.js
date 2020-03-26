@@ -1,11 +1,11 @@
 /**
  * @function 递归
  * @param newInput{Array}
- * @param res{Array}
+ * @param output{Array}
  * @param count{Number}
  * @param arr{Array}
  */
-const recursion = (newInput, res, count, arr) => {
+const recursion = (newInput, output, count, arr) => {
   if (count <= newInput.length - 1) {
     for (let j = 0; j < newInput[count].children.length; j++) {
       arr[count] = j
@@ -16,9 +16,9 @@ const recursion = (newInput, res, count, arr) => {
           temp[newInput[k].id] = newInput[k].children[arr[k]]
           k++
         }
-        res.push(temp)
+        output.push(temp)
       } else {
-        recursion(newInput, res, count + 1, arr)
+        recursion(newInput, output, count + 1, arr)
       }
     }
   }
@@ -51,14 +51,14 @@ const zh = (input) => {
   if (newInput.length == 0) {
     return []
   } else {
-    let res = []
-    recursion(newInput, res, 0, [])
+    let output = []
+    recursion(newInput, output, 0, [])
     /*if (0 <= newInput.length - 1) {
       for (let i = 0; i < newInput[0].children.length; i++) {
         if (newInput.length - 1 == 0) {
           let temp = {}
           temp[newInput[0].id] = newInput[0].children[i]
-          res.push(temp)
+          output.push(temp)
         } else {
           if (1 <= newInput.length - 1) {
             for (let j = 0; j < newInput[1].children.length; j++) {
@@ -66,7 +66,7 @@ const zh = (input) => {
                 let temp = {}
                 temp[newInput[0].id] = newInput[0].children[i]
                 temp[newInput[1].id] = newInput[1].children[j]
-                res.push(temp)
+                output.push(temp)
               } else {
                 if (2 <= newInput.length - 1) {
                   for (let k = 0; k < newInput[2].children.length; k++) {
@@ -75,7 +75,7 @@ const zh = (input) => {
                       temp[newInput[0].id] = newInput[0].children[i]
                       temp[newInput[1].id] = newInput[1].children[j]
                       temp[newInput[2].id] = newInput[2].children[k]
-                      res.push(temp)
+                      output.push(temp)
                     }
                   }
                 } else {
@@ -87,7 +87,7 @@ const zh = (input) => {
         }
       }
     }*/
-    return res
+    return output
   }
 }
 
