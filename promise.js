@@ -49,9 +49,7 @@ IPromise.prototype = {
       }
 
       function fail(reason) {
-        if (typeof failCallback === 'function') {
-          reason = failCallback(reason)
-        }
+        reason = typeof failCallback === 'function' ? failCallback(reason) : reason
         reject(reason)
       }
 
