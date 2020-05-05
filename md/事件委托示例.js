@@ -15,14 +15,27 @@ ulDom.onclick = function (e) {
  * @param callback 回调函数
  */
 const delegate = function (parentDom, childDoms, eventType, callback) {
+  const isChildOf = (childDom, parentDom) => {
+    var parentNode
+    if (childDom && parentDom) {
+      parentNode = childDom.parentNode
+      while (parentNode) {
+        if (parentDom === parentNode) {
+          return true
+        }
+        parentNode = parentNode.parentNode
+      }
+    }
+    return false
+  }
   parentDom.addEventListener(eventType, function (e) {
-    childDoms.map(item => {
-      if (e.srcElement === item) {
+    for (let i = 0; i < childDoms.length; i++) {
+      let parent = childDoms[i]
+      if (isChildOf(e.srcElement, parent)) {
         if (typeof callback === 'function') {
           callback()
         }
       }
-    })
-
+    }
   }, false)
 }
