@@ -8,15 +8,15 @@ ulDom.onclick = function (e) {
 
 //示例2
 /**
- * @function 仿jquery中的delegate的简单实现
- * @param parentDom 对象
+ * @function delegate的简单实现
+ * @param parentDom dom对象
  * @param childDoms 数组
  * @param eventType 事件类型
  * @param callback 回调函数
  */
 const delegate = function (parentDom, childDoms, eventType, callback) {
   const isChildOf = (childDom, parentDom) => {
-    var parentNode
+    let parentNode
     if (childDom && parentDom) {
       parentNode = childDom.parentNode
       while (parentNode) {
@@ -31,7 +31,7 @@ const delegate = function (parentDom, childDoms, eventType, callback) {
   parentDom.addEventListener(eventType, function (e) {
     for (let i = 0; i < childDoms.length; i++) {
       let parent = childDoms[i]
-      if (isChildOf(e.srcElement, parent)) {
+      if (parent === e.srcElement || isChildOf(e.srcElement, parent)) {
         if (typeof callback === 'function') {
           callback()
         }
