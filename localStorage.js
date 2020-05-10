@@ -1,14 +1,7 @@
 let localStorage = {
   data: function () {
     return {
-      timeDiff: '',
       token: '',
-      wechatVersion: '',
-      deviceVersion: '',
-      openid: '',
-      appid: '',
-      version: '',
-      isMember: ''
     }
   }(),
   isExistKey(key) {
@@ -46,6 +39,9 @@ let localStorage = {
     }
   },
   clear() {
+    if (!this.isExistKey(key)) {
+      return
+    }
     try {
       wx.clearStorageSync()
     } catch (e) {
