@@ -19,12 +19,12 @@ null
 
 ### 对象
 
-{"name":"helin",age:28}
+{"name":"helin",“age”:12}
 
 ### 数组
 
 [
-  {"name": "iskeeping","age":30}
+  {"name": "iskeeping","age":12}
 ]
 
 **注意**：对象的key一定要用双引号，以及value如果是字符串一定要用双引号
