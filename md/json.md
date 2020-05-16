@@ -47,7 +47,7 @@ JSON.parse("{\"name\":\"iskeeping\"}")
 
 let json = 简单值/对象/数组
 
-JSON.stringify(json,[]/function(key,value){},字符缩进空格)
+JSON.stringify(json,null/[]/function(key,value){},字符缩进空格)
 
 例：
 
@@ -65,7 +65,7 @@ cosnole.log(formateJson)
 
 <img src="https://user-gold-cdn.xitu.io/2020/5/16/172193c913e452e8?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"/>
 
-## JSON原生的兼容
+## JSON原生支持
 
 原生的JSON对象得到以下浏览器支持。
 
