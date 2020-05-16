@@ -60,7 +60,7 @@ JSON.stringify(json,null/[]/function(key,value){},字符缩进空格长度)
 ```
 let formateJson = JSON.stringify({ name: "iskeeping", age: 12 }, function (key, value) {
     switch (key) {
-        case "name": return 'iskeepingxx';
+        case "name": return "iskeepingxx";
         default: return value;
     }
 }, 8)
