@@ -19,12 +19,12 @@ null
 
 ### 对象
 
-{"name":"helin",“age”:12}
+{"name": "helin",“age”: 12}
 
 ### 数组
 
 [
-  {"name": "iskeeping","age":12}
+  {"name": "iskeeping","age": 12}
 ]
 
 **注意**：对象的key一定要用双引号，以及value如果是字符串一定要用双引号
@@ -33,21 +33,27 @@ null
 
 1. 使用eval
 
+```
 eval("({\"name\":\"iskeeping\"})")
+```
 
 2. 使用Function
 
-new Function("","return ({\"name\":\"iskeeping\"})")()
+```
+new Function("", "return ({\"name\":\"iskeeping\"})")()
+```
 
 3. 使用JSON.parse
 
+```
 JSON.parse("{\"name\":\"iskeeping\"}")
+```
 
 ## JSON序列化
 
 let json = 简单值/对象/数组
 
-JSON.stringify(json,null/[]/function(key,value){},字符缩进空格)
+JSON.stringify(json,null/[]/function(key,value){},字符缩进空格长度)
 
 例：
 
