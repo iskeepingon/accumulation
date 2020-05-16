@@ -49,17 +49,12 @@ CORS全称跨域资源共享，它解决了当跨域访问资源时，浏览器�
 简单请求
 
 ```
-OPTIONS /resources/post-here/ HTTP/1.1
-Host: bar.other
-User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: en-us,en;q=0.5
-Accept-Encoding: gzip,deflate
-Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+GET /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+Accept-Language: en-US
 Connection: keep-alive
-Origin: http://foo.example
-Access-Control-Request-Method: POST
-Access-Control-Request-Headers: Content-Type
+User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.1b3pre) Gecko/20081130 Minefield/3.1b3pre
 
 HTTP/1.1 200 OK
 Date: Mon, 01 Dec 2008 01:15:39 GMT
@@ -75,8 +70,6 @@ Keep-Alive: timeout=2, max=100
 Connection: Keep-Alive
 Content-Type: text/plain
 ```
-
-
 
 ## 非简单请求
 
@@ -145,5 +138,45 @@ Keep-Alive: timeout=2, max=99
 Connection: Keep-Alive
 Content-Type: text/plain
 ```
+
+## HTTP 响应首部字段
+
++ Access-Control-Allow-Origin
+
+表示允许来自所有域的请求/具体域的请求。
+
++ Access-Control-Expose-Headers
+
+让服务器把允许浏览器访问的头放入白名单。这样浏览器就能够通过getResponseHeader访问白名单中的响应头了。
+
++ Access-Control-Max-Age
+
+指定了preflight请求的结果能够被缓存多久。
+
++ Access-Control-Allow-Credentials
+
+指定了当浏览器的credentials设置为true时是否允许浏览器读取response的内容。当用在对preflight预检测请求的响应中时，它指定了实际的请求是否可以使用credentials。请注意：简单 GET 请求不会被预检；如果对此类请求的响应中不包含该字段，这个响应将被忽略掉，并且浏览器也不会将相应内容返回给网页。
+
++ Access-Control-Allow-Methods
+
+用于预检请求的响应。其指明了实际请求所允许使用的 HTTP 方法。
+
++ Access-Control-Allow-Headers
+
+用于预检请求的响应。其指明了实际请求中允许携带的首部字段。
+
+## HTTP 请求首部字段
+
++ Origin
+
+表明预检请求或实际请求的源站。
+
++ Access-Control-Request-Method
+
+用于预检请求。其作用是，将实际请求所使用的 HTTP 方法告诉服务器。
+
++ Access-Control-Request-Headers
+
+用于预检请求。其作用是，将实际请求所携带的首部字段告诉服务器。
 
 谢谢阅读！
