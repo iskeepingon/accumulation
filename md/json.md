@@ -27,7 +27,7 @@
   {"name": "iskeeping","age": 12}
 ]
 
-**注意**：JSON的key一定要用双引号，以及value如果是字符串一定要用双引号
+**注意**：JSON的key一定要用双引号，以及value如果是字符串也一定要用双引号。
 
 ## JSON解析方式
 
@@ -53,7 +53,7 @@ JSON.parse("{\"name\":\"iskeeping\"}")
 
 let json = 简单值/对象/数组
 
-JSON.stringify(json,null/[]/function(key,value){},字符缩进空格长度)
+JSON.stringify(json,null/[]/function(key,value){},缩进空格长度/字符串)
 
 例：
 
