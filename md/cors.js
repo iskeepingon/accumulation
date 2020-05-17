@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 const token = localStorage.getItem('token')
 const request = ({ url, method, data, success, error }) => {
     axios({
@@ -23,3 +24,4 @@ const request = ({ url, method, data, success, error }) => {
             }
         })
 }
+export default request
