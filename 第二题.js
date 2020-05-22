@@ -66,20 +66,22 @@ const getClosest3Nums = (n, arr) => {
         return v1 - v2
     })
     let key
-    for (let i = 1; i < keys.length; i++) {
+    for (let i = 0; i < keys.length; i++) {
         if (keys[i] == n) {
             key = n
             break
         }
-        let tempKeyStart = keys[i - 1]
-        let tempKeyEnd = keys[i]
-        if (tempKeyStart < n && n < tempKeyEnd) {
-            if (n - tempKeyStart > tempKeyEnd - n) {
-                key = tempKeyEnd
-            } else {
-                key = tempKeyStart
+        if (i > 0) {
+            let tempKeyStart = keys[i - 1]
+            let tempKeyEnd = keys[i]
+            if (tempKeyStart < n && n < tempKeyEnd) {
+                if (n - tempKeyStart > tempKeyEnd - n) {
+                    key = tempKeyEnd
+                } else {
+                    key = tempKeyStart
+                }
+                break
             }
-            break
         }
     }
     if (typeof json[key] != 'undefined') {
