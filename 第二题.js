@@ -15,7 +15,7 @@ const clone = (arr) => {
  * @param {Array} arr 
  * @returns {Array} res
  */
-const createZuhe = (arr) => {
+const createAllCombination = (arr) => {
     const len = arr.length
     let res = []
     if (len < 3) {
@@ -48,7 +48,7 @@ const createZuhe = (arr) => {
  */
 const getClosest3Nums = (n, arr) => {
     let array = []
-    let res = createZuhe(arr)
+    let res = createAllCombination(arr)
     let json = {}
     for (let i = 0; i < res.length; i++) {
         let item = res[i]
@@ -90,5 +90,6 @@ const getClosest3Nums = (n, arr) => {
     return array
 }
 
+//求值
 const result = getClosest3Nums(0, [1, -1, -2, -3, 0, 2, 1])
-console.log(result)
+console.log(JSON.stringify(result))
