@@ -93,7 +93,7 @@ const createKey = (json, n) => {
 }
 /**
  * @function 实现一个算法getClosest3Nums，从数组中找出3个元素，使这三个元素之和最接近于给定的数n。
- * @param {number} n 
+ * @param {Number} n 
  * @param {Array} arr 
  * @returns {Array} array
  */
