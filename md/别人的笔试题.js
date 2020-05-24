@@ -71,7 +71,8 @@ const createKey = (json, n) => {
     let keys = Object.keys(json).sort((v1, v2) => {
         return v1 - v2
     })
-    for (let i = 0; i < keys.length; i++) {
+    let len = keys.length
+    for (let i = 0; i < len; i++) {
         if (keys[i] == n) {
             key = n
             break
@@ -86,6 +87,15 @@ const createKey = (json, n) => {
                     key = tempKeyStart
                 }
                 break
+            }
+        }
+        if (i === len - 1) {
+            if (typeof key === 'undefined') {
+                if (Math.abs(keys[0] - n) > Math.abs(keys[len - 1] - n)) {
+                    key = keys[len - 1]
+                } else {
+                    key = keys[0]
+                }
             }
         }
     }
@@ -109,5 +119,6 @@ const getClosest3Nums = (n, arr) => {
 }
 
 //求值
-const result = getClosest3Nums(0, [1, -1, -2, -3, 0, 2, 1])
+// const result = getClosest3Nums(0, [1, -1, -2, -3, 0, 2, 1])
+const result = getClosest3Nums(0, [1, -1, 0])
 console.log(result)
