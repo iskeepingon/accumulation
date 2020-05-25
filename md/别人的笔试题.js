@@ -1,16 +1,4 @@
 /**
- * @function 克隆方法
- * @param {Array} arr 
- * @returns {Array}
- */
-const clone = (arr) => {
-    try {
-        return JSON.parse(JSON.stringify(arr))
-    } catch (e) {
-        console.log(e)
-    }
-}
-/**
  * @function 找出所有的组合（没有去重）
  * @param {Array} arr 
  * @returns {Array} res
@@ -21,37 +9,6 @@ const createAll = (arr) => {
     if (len < 3) {
         return res
     }
-    let arr1 = clone(arr)
-    for (let i = 0; i < arr1.length; i++) {
-        let arr2 = clone(arr)
-        arr2.splice(i, 1)
-        for (let j = 0; j < arr2.length; j++) {
-            let arr3 = clone(arr)
-            arr3.splice(i, 1)
-            arr3.splice(j, 1)
-            for (let k = 0; k < arr3.length; k++) {
-                let tempArr = []
-                tempArr[0] = arr1[i]
-                tempArr[1] = arr2[j]
-                tempArr[2] = arr3[k]
-                res.push(tempArr)
-            }
-        }
-    }
-    return res
-}
-/**
- * @function 找出所有的组合（没有去重） 这一版，优化了，减少了内存占用
- * @param {Array} arr 
- * @returns {Array} res
- */
-const createAll1 = (arr) => {
-    const len = arr.length
-    let res = []
-    if (len < 3) {
-        return res
-    }
-    let arr1 = clone(arr)
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr.length; j++) {
             if (j == i) {
@@ -72,7 +29,7 @@ const createAll1 = (arr) => {
     return res
 }
 /**
- * @function 生成json
+ * @function 对所有的组合进行分类
  * @param {Array} res 
  * @returns {Object} json
  */
@@ -93,7 +50,7 @@ const createJson = (res) => {
     return json
 }
 /**
- * @function 生成key
+ * @function 用n去匹配出来key
  * @param {Object} json 
  * @param {Number} n 
  */
@@ -140,8 +97,7 @@ const createKey = (json, n) => {
  */
 const getClosest3Nums = (n, arr) => {
     let array = []
-    // let res = createAll(arr)
-    let res = createAll1(arr)
+    let res = createAll(arr)
     let json = createJson(res)
     let key = createKey(json, n)
     if (typeof json[key] != 'undefined') {
