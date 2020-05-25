@@ -15,7 +15,7 @@ const clone = (arr) => {
  * @param {Array} arr 
  * @returns {Array} res
  */
-const createZuhe = (arr) => {
+const createAll = (arr) => {
     const len = arr.length
     let res = []
     if (len < 3) {
@@ -34,6 +34,37 @@ const createZuhe = (arr) => {
                 tempArr[0] = arr1[i]
                 tempArr[1] = arr2[j]
                 tempArr[2] = arr3[k]
+                res.push(tempArr)
+            }
+        }
+    }
+    return res
+}
+/**
+ * @function 找出所有的组合（没有去重） 这一版，优化了，减少了内存占用
+ * @param {Array} arr 
+ * @returns {Array} res
+ */
+const createAll1 = (arr) => {
+    const len = arr.length
+    let res = []
+    if (len < 3) {
+        return res
+    }
+    let arr1 = clone(arr)
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr.length; j++) {
+            if (j == i) {
+                continue
+            }
+            for (let k = 0; k < arr.length; k++) {
+                if (k == i || k == j) {
+                    continue
+                }
+                let tempArr = []
+                tempArr[0] = arr[i]
+                tempArr[1] = arr[j]
+                tempArr[2] = arr[k]
                 res.push(tempArr)
             }
         }
@@ -109,7 +140,8 @@ const createKey = (json, n) => {
  */
 const getClosest3Nums = (n, arr) => {
     let array = []
-    let res = createZuhe(arr)
+    // let res = createAll(arr)
+    let res = createAll1(arr)
     let json = createJson(res)
     let key = createKey(json, n)
     if (typeof json[key] != 'undefined') {
