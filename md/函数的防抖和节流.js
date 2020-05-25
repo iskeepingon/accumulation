@@ -13,7 +13,7 @@ function debounce(func, wait, immediate) {
 
     if (timeout) clearTimeout(timeout);
     if (immediate) {
-      var callNow = !timeout;
+      let callNow = !timeout;
       timeout = setTimeout(() => {
         timeout = null;
       }, wait)
