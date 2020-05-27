@@ -9,12 +9,12 @@ const createAll = (arr) => {
     if (len < 3) {
         return res
     }
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr.length; j++) {
+    for (let i = 0; i < len; i++) {
+        for (let j = 0; j < len; j++) {
             if (j == i) {
                 continue
             }
-            for (let k = 0; k < arr.length; k++) {
+            for (let k = 0; k < len; k++) {
                 if (k == i || k == j) {
                     continue
                 }
