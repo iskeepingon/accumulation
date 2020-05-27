@@ -1,0 +1,117 @@
+## 前言
+
+当网络速度不好的时候，请求超时了，我们希望通过程序去实现自动重新再发一个请求，而不需要用户重新刷新页面，基于这么一个原因，我们有理由去实现一个重试机制，让用户减少刷新页面的次数。
+
+## 思路
+
+1. 异步请求的串行发送
+2. 异步请求的延迟发送
+3. 异步请求的重试次数的控制
+
+然后，我们开始用代码去实现，这里我使用模拟的请求来完成代码的实现。
+
+## 代码实现
+
+### 请求重试
+
+```
+/**
+ * @function 延迟函数
+ * @param second {number} 延迟间隔
+ * @returns {Promise<any>}
+ * @private
+ */
+function _delay(second = 1000) {
+  // 延迟second
+  return new Promise((resolve) => {
+    setTimeout(function () {
+      resolve()
+    }, second)
+  })
+}
+
+/**
+ * @function 递归函数
+ * @param promise {Promise<any>}
+ * @param resolve
+ * @param reject
+ * @param count {number} 第几次请求
+ * @param totalCount {number} 请求次数
+ * @private
+ */
+function _recursion(promise, resolve, reject, count, totalCount) {
+  _delay().then(() => {
+    promise().then((res) => {
+      resolve(res)
+    }).catch((err) => {
+      if (count >= totalCount) {
+        reject(err)
+        return
+      }
+      _recursion(promise, resolve, reject, count + 1, totalCount)
+    })
+  })
+}
+
+/**
+ * @function 请求重试函数
+ * @param promise {Promise<any>}
+ * @param totalCount {number} 请求次数
+ * @returns {Promise<any>}
+ */
+function requestTry(promise, totalCount) {
+  return new Promise((resolve, reject) => {
+    let count = 1
+    promise().then((res) => {
+      resolve(res)
+    }).catch((err) => {
+      if (count >= totalCount) {
+        reject(err)
+        return
+      }
+      _recursion(promise, resolve, reject, count + 2, totalCount)
+    })
+  })
+}
+
+export default requestTry
+```
+
+### 请求重试的调用
+
+```
+import requestTry from './requestTry'
+
+/**
+ * @function 模拟请求函数
+ * @returns {Promise<any>}
+ */
+function query() {
+  return new Promise((resolve, reject) => {
+    let random = Math.floor(Math.random() * 10)
+    console.log(1)
+    setTimeout(() => {
+      if (random > 5) {
+        resolve({code: 0, msg: '成功'})
+      } else {
+        reject({code: 1, msg: '失败'})
+      }
+    }, 1000)
+  })
+}
+
+/**
+ * @function 发起一个请求，最多请求五次，如果五次还不成功，就结束
+ */
+requestTry(query, 5)
+  .then((res) => {
+    console.log(res)
+  }).catch((err) => {
+  console.log(err)
+})
+
+```
+
+谢谢阅读！
+
+需要加微信交流，可留言！
