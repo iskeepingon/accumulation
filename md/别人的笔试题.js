@@ -108,5 +108,5 @@ const getClosest3Nums = (n, arr) => {
 
 //求值
 // const result = getClosest3Nums(0, [1, -1, -2, -3, 0, 2, 1])
-const result = getClosest3Nums(0, [1, -1, 0])
+const result = getClosest3Nums(1, [-1, 2, 1, -4])[0]
 console.log(result)
