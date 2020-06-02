@@ -31,7 +31,7 @@ Pragma只有一个属性值，就是no-cache，效果和Cache-Control中的no-ca
 
 ### 优先级
 
-Expires < Cache-Control < Pragma
+Expires < Cache-Control < Pragma，这也意味着当设置Pragma为no-cache时，Catch-Control设置为无效。类似于css中的优先级，优先级高的样式才会生效。
 
 ## 协商缓存
 
