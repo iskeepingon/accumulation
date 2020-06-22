@@ -52,8 +52,10 @@ var property = (function (opts) {
     }
   }
   return res
-})({hasSet: true, hasGet: true})
+})({ hasSet: true, hasGet: true })
 
 console.log(property.get())
 property.set('闭包DEMO')
 console.log(property.get())
+
+
