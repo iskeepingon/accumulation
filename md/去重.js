@@ -31,3 +31,12 @@ function unique(arr) {
 
 let arr = [1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1]
 console.log(unique(arr))
+
+let j = 0, i = 0
+let res = []
+let a = [1, 1, 1, 1]
+while (i > -1) {
+  i = a.indexOf(1, j++)
+  i>-1&&res.push(i)
+}
+console.log(res)
