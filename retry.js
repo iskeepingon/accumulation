@@ -51,9 +51,9 @@ function requestTry(promise, totalCount) {
     }).catch((err) => {
       if (count >= totalCount) {
         reject(err)
-        return
+      } else {
+        _recursion(promise, resolve, reject, count + 2, totalCount)
       }
-      _recursion(promise, resolve, reject, count + 2, totalCount)
     })
   })
 }
@@ -68,9 +68,9 @@ function query() {
     console.log(1)
     setTimeout(() => {
       if (random > 5) {
-        resolve({code: 0, msg: '成功'})
+        resolve({ code: 0, msg: '成功' })
       } else {
-        reject({code: 1, msg: '失败'})
+        reject({ code: 1, msg: '失败' })
       }
     }, 1000)
   })
@@ -83,5 +83,5 @@ requestTry(query, 5)
   .then((res) => {
     console.log(res)
   }).catch((err) => {
-  console.log(err)
-})
+    console.log(err)
+  })
