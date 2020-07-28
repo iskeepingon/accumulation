@@ -1,6 +1,26 @@
 // <a href="javascript:void(0)" @click="getCode">
 //   {{cutdownCount==0?(cutdowned?'重新获取':'获取验证码'):(cutdownCount+'s')}}
 // </a>
+
+const cutdown = ({ count = 60, gap = 1000, onStart, onGoing, onFinish }) => {
+  //倒计时
+  if (typeof onStart === 'function') {
+    onStart(count)
+  }
+  let timer = setInterval(() => {
+    count--
+    if (typeof onGoing === 'function') {
+      onGoing(count, timer)
+    }
+    if (count == 0) {
+      clearInterval(timer)
+      if (typeof onFinish === 'function') {
+        onFinish()
+      }
+    }
+  }, gap)
+}
+
 export default {
   data() {
     return {
@@ -15,7 +35,7 @@ export default {
       if (this.isCutdowning) {
         return
       }
-      this.cutdown({
+      cutdown({
         onStart: (count) => {
           this.cutdowned = true
           this.isCutdowning = true
@@ -29,24 +49,6 @@ export default {
           this.isCutdowning = false
         }
       })
-    },
-    cutdown({count = 60, gap = 1000, onStart, onGoing, onFinish}) {
-      //倒计时
-      if (typeof onStart === 'function') {
-        onStart(count)
-      }
-      let timer = setInterval(() => {
-        count--
-        if (typeof onGoing === 'function') {
-          onGoing(count, timer)
-        }
-        if (count == 0) {
-          clearInterval(timer)
-          if (typeof onFinish === 'function') {
-            onFinish()
-          }
-        }
-      }, gap)
     }
   }
 }
