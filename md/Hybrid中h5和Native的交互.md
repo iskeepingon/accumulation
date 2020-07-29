@@ -266,4 +266,4 @@ _bridge = [WebViewJavascriptBridge bridgeForWebView:web];
 
 ## JsBridge
 
-Hybrid App中的JsBridge是上述的内容组合起来的。
+Hybrid App中的JsBridge是上述的交互组合起来的结果。
