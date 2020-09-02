@@ -17,7 +17,7 @@ Person.prototype = {
 
     },
     eat: function (name) {
-        let callback = function () {
+        let callback = function (name) {
             console.log(name || '')
         }
         return this._common(callback, name)
@@ -42,7 +42,7 @@ Person.prototype = {
         return this
     },
     play: function (name) {
-        let callback = function () {
+        let callback = function (name) {
             console.log(name || '')
         }
         return this._common(callback, name)
