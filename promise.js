@@ -1,98 +1,177 @@
-function IPromise(callback) {
-  this.data = undefined
-  this.reason = undefined
-  this.status = 'pending'
-  this.successCallbacks = []
-  this.failCallbacks = []
+const PENDING = 'pending';
+const FULFILLED = 'fulfilled';
+const REJECTED = 'rejected';
 
-  let resolve = () => {
-    this.status = 'fulfilled'
-    setTimeout(() => {
-      this.successCallbacks.forEach((successCallback) => {
-        successCallback(this.data)
-      })
-    }, 0)
+class _Promise {
+  constructor (executor) {
+    this._status = PENDING;
+    this._value = undefined;
+    this._resolves = [];
+    this._rejects = [];
+
+    const resolve = (value) => {
+      const run = () => {
+        if (this._status !== PENDING) {
+          return;
+        }
+
+        this._status = FULFILLED;
+        this._value = value;
+
+        while (this._resolves.length) {
+          const callback = this._resolves.shift();
+          callback(value);
+        }
+      };
+      setTimeout(run);
+    };
+
+    const reject = (value) => {
+      const run = () => {
+        if (this._status !== PENDING) {
+          return;
+        }
+
+        this._status = REJECTED;
+        this._value = value;
+
+        while (this._rejects.length) {
+          const callback = this._rejects.unshift();
+          callback(value);
+        }
+      };
+      setTimeout(run);
+    };
+
+    // 初始化时, 立即执行executor
+    executor(resolve, reject);
   }
 
-  let reject = () => {
-    this.status = 'rejected'
-    setTimeout(() => {
-      this.failCallbacks.forEach((failCallback) => {
-        failCallback(this.reason)
-      })
-    }, 0)
+  then (resolveFn, rejectFn) {
+    if (typeof resolveFn !== 'function') {
+      resolveFn = (value) => value;
+    }
+    if (typeof rejectFn !== 'function') {
+      rejectFn = (reason) => {
+        throw new Error(reason instanceof Error ? reason.message : reason);
+      };
+    }
+
+    return new _Promise((resolve, reject) => {
+      const fulfilled = (val) => {
+        try {
+          const res = resolveFn(val);
+          res instanceof _Promise ? res.then(resolve, reject) : resolve(res);
+        }
+        catch (e) {
+          reject(e);
+        }
+      };
+
+      const rejected = (err) => {
+        try {
+          let res = rejectFn(err);
+          res instanceof _Promise ? res.then(resolve, reject) : resolve(res);
+        }
+        catch (e) {
+          reject(e);
+        }
+      };
+
+      switch (this._status) {
+        case PENDING: {
+          this._resolves.push(fulfilled);
+          this._rejects.push(rejected);
+          break;
+        }
+        // 状态为FULFILLED/REJECTED时, 直接执行then回调
+        case FULFILLED: {
+          fulfilled(this._value);
+          break;
+        }
+        case REJECTED: {
+          rejected(this._value);
+          break;
+        }
+      }
+    });
   }
 
-  if (typeof callback === 'function') {
-    callback(resolve, reject)
+  catch (rejectFn) {
+    return this.then(undefined, rejectFn);
+  }
+
+  finally (callback) {
+    return this.then(
+      value => _Promise.resolve(callback()).then(() => value),
+      reason => _Promise.resolve(callback()).then(() => {throw reason;}),
+    );
+  }
+
+  static resolve (value) {
+    return value instanceof _Promise ? value : new _Promise((resolve) => resolve(value));
+  }
+
+  static reject (reason) {
+    return new _Promise((_, reject) => reject(reason));
+  }
+
+  static all (promises) {
+    let count;
+    const res = [];
+
+    return new _Promise((resolve, reject) => {
+      promises.forEach((promise, index) => {
+        _Promise.resolve(promise).then(
+          (value) => {
+            count++;
+            res[index] = value;
+            if (count === promises.length) {
+              resolve(res);
+            }
+          },
+          (error) => {
+            reject(error);
+          },
+        );
+      });
+    });
+  }
+
+  static race (promises) {
+    return new _Promise((resolve, reject) => {
+      for (let promise of promises) {
+        _Promise.resolve(promise).then(
+          (value) => {
+            resolve(value);
+          },
+          (error) => {
+            reject(error);
+          },
+        );
+      }
+    });
   }
 }
 
-IPromise.prototype = {
-  then(successCallback, failCallback) {
-    return new IPromise((resolve, reject) => {
-
-      function success(value) {
-        let res
-        if (typeof successCallback === 'function') {
-          res = successCallback(value)
-        } else {
-          res = value
-        }
-        if (res && typeof res['then'] === 'function') {
-          res.then(function (value) {
-            resolve(value)
-          })
-        } else {
-          resolve(res)
-        }
-      }
-
-      function fail(reason) {
-        reason = typeof failCallback === 'function' ? failCallback(reason) : reason
-        reject(reason)
-      }
-
-      if (this.status === 'pending') {
-        if (typeof successCallback === 'function') {
-          this.successCallbacks.push(success)
-        }
-        if (typeof failCallback === 'function') {
-          this.failCallbacks.push(fail)
-        }
-      } else if (this.status === 'fulfilled') {
-        success(this.data)
-      } else {
-        fail(this.reason)
-      }
-    })
-  }
-}
-
-let delay = () => {
-  return new IPromise((resolve, reject) => {
-    setTimeout(() => {
-      let number = Math.floor(Math.random() * 10)
-      console.log(number)
-      if (number > 5) {
-        resolve(number)
-      } else {
-        reject(number)
-      }
-    }, 1000)
-  })
-}
-
-let p = delay().then((number) => {
-  console.log('delay第一次调用 成功', number)
-  // return delay()
-}, (number) => {
-  console.log('delay第一次调用 失败', number)
+new _Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve(1);
+  }, 500);
 })
-/*if (p && typeof p['then'] === 'function') {
-  p.then((number) => {
-    console.log('delay第二次调用 成功', number)
-  }, (number) => {
-    console.log('delay第二次调用 失败', number)
+  .then(res => {
+    console.log(res);
+    return new _Promise((resolve) => {
+      setTimeout(() => {
+        resolve(2);
+      }, 1000);
+    });
   })
-}*/
+  .then(res => {
+    console.log(res);
+    return 3;
+  })
+  .then(res => {
+    console.log(res);
+  })
+  .catch(console.log);
