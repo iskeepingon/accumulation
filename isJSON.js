@@ -1,4 +1,4 @@
-​/**
+/**
  * @function 判断obj是否是[{},...]或者{}​
  * @param obj {any}
  * @returns {boolean}
