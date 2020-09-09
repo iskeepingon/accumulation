@@ -52,7 +52,7 @@ Person.prototype = {
   cancel: function () {// 删除某个宏任务中的任务队列中最后一个
     if (this._isMacro()) {
       let len = this.fns.length
-      if (len) {
+      if (len > 0) {
         this.fns[len - 1].callbacks.pop()
       }
     }
