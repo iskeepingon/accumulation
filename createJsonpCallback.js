@@ -12,7 +12,11 @@ export function createJsonpCallback (nameStr, callback) {
   let w = window
   while (i < nameArr.length) {
     if (nameArr.length - 1 === i) {
-      w[nameArr[i]] = callback
+      if (w[nameArr[i]]) {
+        throw new Error('jsonpCallback重复定义')
+      } else {
+        w[nameArr[i]] = callback
+      }
     } else {
       if (w[nameArr[i]]) {
       } else {
